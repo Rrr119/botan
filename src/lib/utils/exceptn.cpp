@@ -48,6 +48,8 @@ std::string to_string(ErrorType type) {
          return "InvalidTag";
       case ErrorType::RoughtimeError:
          return "RoughtimeError";
+      case ErrorType::AlgorithmNotPermitted:
+         return "AlgorithmNotPermitted";
       case ErrorType::CommonCryptoError:
          return "CommonCryptoError";
       case ErrorType::Pkcs11Error:
@@ -116,6 +118,12 @@ Algorithm_Not_Found::Algorithm_Not_Found(std::string_view name) :
 
 Provider_Not_Found::Provider_Not_Found(std::string_view algo, std::string_view provider) :
       Lookup_Error(fmt("Could not find provider '{}' for algorithm '{}'", provider, algo)) {}
+
+Algorithm_Not_Permitted::Algorithm_Not_Permitted(std::string_view algo_type,
+                                                 std::string_view algo,
+                                                 std::string_view policy,
+                                                 std::string_view reason) :
+      Exception(fmt("{} '{}' is not permitted by algorithm policy '{}': {}", algo_type, algo, policy, reason)) {}
 
 Invalid_Algorithm_Name::Invalid_Algorithm_Name(std::string_view name) :
       Invalid_Argument(fmt("Invalid algorithm name: '{}'", name)) {}

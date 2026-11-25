@@ -7,6 +7,7 @@
 
 #include <botan/block_cipher.h>
 
+#include <botan/algo_policy.h>
 #include <botan/assert.h>
 #include <botan/exceptn.h>
 #include <botan/internal/algorithm_spec.h>
@@ -95,6 +96,10 @@
 namespace Botan {
 
 std::unique_ptr<BlockCipher> BlockCipher::create(std::string_view algo, std::string_view provider) {
+   if(!algorithm_permitted(algo)) {
+      return nullptr;
+   }
+
 #if defined(BOTAN_HAS_COMMONCRYPTO)
    if(provider.empty() || provider == "commoncrypto") {
       if(auto bc = make_commoncrypto_block_cipher(algo))
@@ -269,6 +274,8 @@ std::unique_ptr<BlockCipher> BlockCipher::create(std::string_view algo, std::str
 
 //static
 std::unique_ptr<BlockCipher> BlockCipher::create_or_throw(std::string_view algo, std::string_view provider) {
+   throw_if_algorithm_not_permitted("Block cipher", algo);
+
    if(auto bc = BlockCipher::create(algo, provider)) {
       return bc;
    }

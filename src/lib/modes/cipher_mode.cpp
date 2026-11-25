@@ -7,6 +7,7 @@
 
 #include <botan/cipher_mode.h>
 
+#include <botan/algo_policy.h>
 #include <botan/exceptn.h>
 #include <botan/internal/algorithm_spec.h>
 #include <botan/internal/stream_mode.h>
@@ -42,6 +43,8 @@ namespace Botan {
 std::unique_ptr<Cipher_Mode> Cipher_Mode::create_or_throw(std::string_view algo,
                                                           Cipher_Dir direction,
                                                           std::string_view provider) {
+   throw_if_algorithm_not_permitted("Cipher mode", algo);
+
    if(auto mode = Cipher_Mode::create(algo, direction, provider)) {
       return mode;
    }
@@ -52,6 +55,10 @@ std::unique_ptr<Cipher_Mode> Cipher_Mode::create_or_throw(std::string_view algo,
 std::unique_ptr<Cipher_Mode> Cipher_Mode::create(std::string_view algo,
                                                  Cipher_Dir direction,
                                                  std::string_view provider) {
+   if(!algorithm_permitted(algo)) {
+      return nullptr;
+   }
+
 #if defined(BOTAN_HAS_COMMONCRYPTO)
    if(provider.empty() || provider == "commoncrypto") {
       if(auto cm = make_commoncrypto_cipher_mode(algo, direction))

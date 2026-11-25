@@ -1,4 +1,5 @@
 <header:public>
+algo_policy.h
 buf_comp.h
 secmem.h
 sym_algo.h

@@ -56,6 +56,8 @@ enum class ErrorType : uint16_t {
    InvalidTag = 110,
    /** An error during Roughtime validation */
    RoughtimeError = 111,
+   /** An algorithm was rejected by the active algorithm policy */
+   AlgorithmNotPermitted = 112,
 
    /** An error when interacting with CommonCrypto API */
    CommonCryptoError = 201,
@@ -377,6 +379,32 @@ class BOTAN_PUBLIC_API(2, 0) Provider_Not_Found final : public Lookup_Error {
       * @param provider the provider which was not available
       */
       Provider_Not_Found(std::string_view algo, std::string_view provider);
+};
+
+/**
+* Algorithm_Not_Permitted is thrown when an algorithm is rejected by the
+* currently active algorithm policy (see algo_policy.h), for example when
+* requesting a non-approved algorithm while a FIPS 140-3 policy is in effect.
+*/
+class BOTAN_PUBLIC_API(3, 15) Algorithm_Not_Permitted final : public Exception {
+   public:
+      /**
+      * Create a Algorithm_Not_Permitted exception
+      * @param algo_type the kind of object which was requested (eg "Block cipher")
+      * @param algo the algorithm name which was requested
+      * @param policy the name of the policy which rejected the algorithm
+      * @param reason a human readable explanation of why the algorithm was rejected
+      */
+      Algorithm_Not_Permitted(std::string_view algo_type,
+                              std::string_view algo,
+                              std::string_view policy,
+                              std::string_view reason);
+
+      /**
+      * Return the error type of this exception
+      * @return the error type of this exception
+      */
+      ErrorType error_type() const noexcept override { return ErrorType::AlgorithmNotPermitted; }
 };
 
 /**

@@ -10,6 +10,14 @@ General Notes
 New APIs and Features
 ----------------------------------------
 
+* Add process wide algorithm policies (``botan/algo_policy.h``). Installing
+  an ``Algorithm_Policy`` (standard, FIPS 140-3, strict, or a custom
+  whitelist) makes the symmetric algorithm factories reject non-permitted
+  algorithms already at creation time, throwing ``Algorithm_Not_Permitted``
+  with a message explaining the reason. ``Botan::algorithm_permitted`` and
+  ``Botan::algorithm_available`` allow prechecking algorithm availability.
+  The default policy permits everything, matching previous behavior.
+
 * Add ``EC_AffinePoint::get_affine_x`` and ``EC_AffinePoint::get_affine_y``,
   to ease migrating applications from ``EC_Point``. (GH #6126)
 

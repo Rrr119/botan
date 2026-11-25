@@ -7,6 +7,7 @@
 
 #include <botan/hash.h>
 
+#include <botan/algo_policy.h>
 #include <botan/exceptn.h>
 #include <botan/internal/algorithm_spec.h>
 #include <botan/internal/probe_providers.h>
@@ -110,6 +111,10 @@
 namespace Botan {
 
 std::unique_ptr<HashFunction> HashFunction::create(std::string_view algo_spec, std::string_view provider) {
+   if(!algorithm_permitted(algo_spec)) {
+      return nullptr;
+   }
+
 #if defined(BOTAN_HAS_COMMONCRYPTO)
    if(provider.empty() || provider == "commoncrypto") {
       if(auto hash = make_commoncrypto_hash(algo_spec))
@@ -309,6 +314,8 @@ std::unique_ptr<HashFunction> HashFunction::create(std::string_view algo_spec, s
 
 //static
 std::unique_ptr<HashFunction> HashFunction::create_or_throw(std::string_view algo, std::string_view provider) {
+   throw_if_algorithm_not_permitted("Hash", algo);
+
    if(auto hash = HashFunction::create(algo, provider)) {
       return hash;
    }

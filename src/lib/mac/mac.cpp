@@ -7,6 +7,7 @@
 
 #include <botan/mac.h>
 
+#include <botan/algo_policy.h>
 #include <botan/exceptn.h>
 #include <botan/internal/algorithm_spec.h>
 #include <botan/internal/ct_utils.h>
@@ -50,6 +51,10 @@ namespace Botan {
 
 std::unique_ptr<MessageAuthenticationCode> MessageAuthenticationCode::create(std::string_view algo_spec,
                                                                              std::string_view provider) {
+   if(!algorithm_permitted(algo_spec)) {
+      return nullptr;
+   }
+
    const AlgorithmSpec req(algo_spec);
 
 #if defined(BOTAN_HAS_BLAKE2BMAC)
@@ -141,6 +146,8 @@ std::vector<std::string> MessageAuthenticationCode::providers(std::string_view a
 //static
 std::unique_ptr<MessageAuthenticationCode> MessageAuthenticationCode::create_or_throw(std::string_view algo,
                                                                                       std::string_view provider) {
+   throw_if_algorithm_not_permitted("MAC", algo);
+
    if(auto mac = MessageAuthenticationCode::create(algo, provider)) {
       return mac;
    }

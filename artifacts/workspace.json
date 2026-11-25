@@ -1,0 +1,17 @@
+{
+  "root": "/home/dev/feedback/uid38846",
+  "B": "/home/dev/feedback/uid38846",
+  "sha": "562638d37818853845e0016c23882722c57e54bc",
+  "wslDistro": "Ubuntu-26.04",
+  "source": {
+    "owner": "randombit",
+    "repo": "botan",
+    "sha": "562638d37818853845e0016c23882722c57e54bc"
+  },
+  "fork": {
+    "owner": "Rrr119",
+    "repo": "botan",
+    "cloneUrl": "https://github.com/Rrr119/botan.git"
+  },
+  "at": "2026-11-25T21:55:24.234Z"
+}

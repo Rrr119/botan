@@ -12,6 +12,7 @@ API Reference
    rng
    hash
    block_cipher
+   algo_policy
    stream_ciphers
    message_auth_codes
    cipher_modes

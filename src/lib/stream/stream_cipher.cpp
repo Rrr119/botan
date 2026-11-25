@@ -7,6 +7,7 @@
 
 #include <botan/stream_cipher.h>
 
+#include <botan/algo_policy.h>
 #include <botan/exceptn.h>
 #include <botan/mem_ops.h>
 #include <botan/internal/algorithm_spec.h>
@@ -39,6 +40,10 @@
 namespace Botan {
 
 std::unique_ptr<StreamCipher> StreamCipher::create(std::string_view algo_spec, std::string_view provider) {
+   if(!algorithm_permitted(algo_spec)) {
+      return nullptr;
+   }
+
 #if defined(BOTAN_HAS_SHAKE_CIPHER)
    if(algo_spec == "SHAKE-128" || algo_spec == "SHAKE-128-XOF") {
       if(provider.empty() || provider == "base") {
@@ -122,6 +127,8 @@ std::unique_ptr<StreamCipher> StreamCipher::create(std::string_view algo_spec, s
 
 //static
 std::unique_ptr<StreamCipher> StreamCipher::create_or_throw(std::string_view algo, std::string_view provider) {
+   throw_if_algorithm_not_permitted("Stream cipher", algo);
+
    if(auto sc = StreamCipher::create(algo, provider)) {
       return sc;
    }
